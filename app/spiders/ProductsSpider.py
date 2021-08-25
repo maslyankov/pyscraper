@@ -53,11 +53,17 @@ class ProductsSpider(scrapy.Spider):
 
     @staticmethod
     def parse_product(response):
-        # Get product specs
+        p_specs = calc_specs(response)
+        p_name = response.css('h1.js-product-name::text').get()
+
+        if "Марка" in p_specs:
+            p_name = f"{p_specs['Марка']} {p_name}"
+
         l = ItemLoader(item=Product(), response=response)
-        l.add_css('name', 'h1.js-product-name::text')
+        l.add_value('name', p_name)
         l.add_css('price', 'p.js-product-price::attr(data-price-value)')
         l.add_css('images', 'div.popup-gallery img::attr(src)')
-        l.add_value('specs', calc_specs(response))
+        l.add_value('specs', p_specs)
+        l.add_value('url', response.url)
 
         return l.load_item()

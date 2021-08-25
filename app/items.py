@@ -12,3 +12,4 @@ class Product(Item):
     price = Field(output_processor=TakeFirst())
     images = Field()
     specs = Field(output_processor=TakeFirst())
+    url = Field(output_processor=TakeFirst())
