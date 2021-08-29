@@ -4,7 +4,7 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 from scrapy.item import Item, Field
-from scrapy.loader.processors import TakeFirst
+from itemloaders.processors import TakeFirst
 
 
 class Product(Item):
@@ -13,3 +13,5 @@ class Product(Item):
     images = Field()
     specs = Field(output_processor=TakeFirst())
     url = Field(output_processor=TakeFirst())
+    availability = Field(output_processor=TakeFirst())
+    lowest_stock = Field(output_processor=TakeFirst())
