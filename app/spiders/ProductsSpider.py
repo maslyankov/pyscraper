@@ -66,10 +66,24 @@ class ProductsSpider(Spider):
             self.save_to_global_availability(p_availability)
 
             lowest_avail = self.get_lowest_availability_store(p_availability)
-            p_lowest_availability = {
-                'store': p_availability[lowest_avail[1]]['store_name'],
-                'stock': lowest_avail[0]
-            }
+            if not isinstance(lowest_avail[1], list):
+                print(f"storename is: {p_availability[lowest_avail[1]]['store_name']}")
+                print(f"Type is: {type(p_availability[lowest_avail[1]]['store_name'])}")
+            
+            try:
+                lowest_stores = [p_availability[store]['store_name'] for store in lowest_avail[1]] if isinstance(lowest_avail[1], list) else p_availability[lowest_avail[1]]['store_name']
+
+                p_lowest_availability = {
+                    'store': lowest_stores,
+                    'stock': lowest_avail[0]
+                }
+            except TypeError:
+                print("Errored!")
+                print(f"lowest avail[1]: {lowest_avail[1]}")
+                print(f"availability: {p_availability}")
+
+                # print(f"storename is: {p_availability[lowest_avail[1]]['store_name']}")
+                # print(f"Type is: {type(p_availability[lowest_avail[1]]['store_name'])}")
 
         print(f'for {p_name} we got this avaibalility: {p_availability}')
 
@@ -207,7 +221,10 @@ class ProductsSpider(Spider):
             if lowest[0] is None or current < lowest[0]:
                 lowest = (current, store)
             elif lowest[0] == current:
-                lowest = (current, [lowest[1]] + [store])
+                if isinstance(lowest[1], list):
+                    lowest[1].append(store)
+                else:
+                    lowest = (current, [lowest[1]])
             
         return lowest
     
